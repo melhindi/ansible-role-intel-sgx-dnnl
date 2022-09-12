@@ -1,0 +1,62 @@
+---
+# tasks file for intel_sgx_dnnl
+
+- name: Include variables
+  ansible.builtin.include_vars:
+    file: main.yml
+
+- name: Ensure git is installed
+  ansible.builtin.apt:
+    name: git
+    state: present
+    update_cache: true
+
+- name: Ensure cmake is installed
+  ansible.builtin.apt:
+    name: cmake
+    state: present
+    update_cache: true
+
+- name: Clone intel-sgx repository
+  ansible.builtin.git:
+    repo: "{{ sgx_linux_url }}"
+    dest: "{{ sgx_linux_download_path }}"
+    # cloning all external modules takes a lot of time
+    # instead we later fetch the one module that we need
+    recursive: false
+    # Since we apply patches we might force pull on re-execution
+    force: true
+
+- name: Avoid git asking for username by replacing am with apply
+  ansible.builtin.replace:
+    path: "{{ sgx_linux_download_path }}/external/dnnl/Makefile"
+    regexp: 'git am'
+    replace: 'git apply'
+
+- name: Compile sgx-dnnl
+  ansible.builtin.make:
+    jobs: "{{ num_build_jobs }}"
+    chdir: "{{ sgx_linux_download_path }}/external/dnnl"
+  become: true
+
+- name: Copy sgx dnnl library
+  ansible.builtin.copy:
+    # tell ansible that path is not on the control node, but on the remote
+    remote_src: true
+    src: "{{ sgx_linux_download_path }}/external/dnnl/sgx_dnnl/lib/libsgx_dnnl.a"
+    dest: "{{ sgx_sdk_install_prefix }}/sgxsdk/lib64"
+
+# Unfortunately, it is not possible to use with_fileglob to copy multiple remote files
+# see https://stackoverflow.com/questions/33543551/is-there-with-fileglob-that-works-remotely-in-ansible
+- name: Mark all files in the dnnl include dir for copy
+  ansible.builtin.find:
+    paths: "{{ sgx_linux_download_path }}/external/dnnl/sgx_dnnl/include"
+  register: dnnl_include_files
+
+- name: Copy sgx dnnl library
+  ansible.builtin.copy:
+    # tell ansible that path is not on the control node, but on the remote
+    remote_src: true
+    src: "{{ item.path }}"
+    dest: "{{ sgx_sdk_install_prefix }}/sgxsdk/include"
+  with_items: "{{ dnnl_include_files.files }}"

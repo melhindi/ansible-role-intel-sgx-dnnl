@@ -1,0 +1,19 @@
+galaxy_info:
+  role_name: intel_sgx_dnnl
+  author: melhindi
+  description: Build and install the Intel SGX DNNL library from source which is a patched version of Intel's oneDNN library.
+  license: Apache-2.0
+  min_ansible_version: 2.1
+  platforms:
+    - name: Ubuntu
+      versions:
+      - focal
+
+  galaxy_tags:
+    - intel
+    - sgx
+    - dnnl
+
+dependencies:
+  - melhindi.intel_sgx_pws
+  - melhindi.intel_sgx_sdk

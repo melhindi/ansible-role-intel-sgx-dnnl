@@ -1,0 +1,6 @@
+---
+# defaults file for intel_sgx_sdk
+
+sgx_linux_url: "https://github.com/intel/linux-sgx"
+sgx_linux_download_path: "/tmp/linux-sgx"
+sgx_sdk_install_prefix: "/opt/intel"

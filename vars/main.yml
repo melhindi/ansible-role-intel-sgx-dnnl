@@ -1,0 +1,4 @@
+---
+# vars file for intel_sgx_sdk
+
+num_build_jobs: 2
