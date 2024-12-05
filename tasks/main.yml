@@ -27,12 +27,6 @@
     # Since we apply patches we might force pull on re-execution
     force: true
 
-- name: Avoid git asking for username by replacing am with apply
-  ansible.builtin.replace:
-    path: "{{ sgx_linux_download_path }}/external/dnnl/Makefile"
-    regexp: 'git am'
-    replace: 'git apply'
-
 - name: Compile sgx-dnnl
   ansible.builtin.make:
     jobs: "{{ num_build_jobs }}"

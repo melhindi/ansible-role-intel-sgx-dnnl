@@ -8,12 +8,9 @@ galaxy_info:
     - name: Ubuntu
       versions:
       - focal
+      - noble
 
   galaxy_tags:
     - intel
     - sgx
     - dnnl
-
-dependencies:
-  - melhindi.intel_sgx_pws
-  - melhindi.intel_sgx_sdk

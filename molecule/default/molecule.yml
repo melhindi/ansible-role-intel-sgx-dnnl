@@ -4,8 +4,12 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: ubuntu2004
+  - name: dnnl_ubuntu2004
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2004}-ansible:latest"
+    pre_build_image: true
+    privileged: true
+  - name: dnnl_ubuntu2404
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2404}-ansible:latest"
     pre_build_image: true
     privileged: true
 provisioner:
